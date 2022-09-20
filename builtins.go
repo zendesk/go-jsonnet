@@ -396,6 +396,48 @@ func builtinJoin(i *interpreter, sep, arrv value) (value, error) {
 	}
 }
 
+func builtinFoldl(i *interpreter, funcv, arrv, initv value) (value, error) {
+	arr, err := i.getArray(arrv)
+	if err != nil {
+		return nil, err
+	}
+	fun, err := i.getFunction(funcv)
+	if err != nil {
+		return nil, err
+	}
+
+	accValue := initv
+	for counter := 0; counter < arr.length(); counter++ {
+		accValue, err = fun.call(i, args([]*cachedThunk{readyThunk(accValue), arr.elements[counter]}...))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return accValue, nil
+}
+
+func builtinFoldr(i *interpreter, funcv, arrv, initv value) (value, error) {
+	arr, err := i.getArray(arrv)
+	if err != nil {
+		return nil, err
+	}
+	fun, err := i.getFunction(funcv)
+	if err != nil {
+		return nil, err
+	}
+
+	accValue := initv
+	for counter := arr.length() - 1; counter >= 0; counter-- {
+		accValue, err = fun.call(i, args([]*cachedThunk{arr.elements[counter], readyThunk(accValue)}...))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return accValue, nil
+}
+
 func builtinReverse(i *interpreter, arrv value) (value, error) {
 	arr, err := i.getArray(arrv)
 	if err != nil {
@@ -1636,6 +1678,8 @@ var funcBuiltins = buildBuiltinMap([]builtin{
 	&binaryBuiltin{name: "join", function: builtinJoin, params: ast.Identifiers{"sep", "arr"}},
 	&unaryBuiltin{name: "reverse", function: builtinReverse, params: ast.Identifiers{"arr"}},
 	&binaryBuiltin{name: "filter", function: builtinFilter, params: ast.Identifiers{"func", "arr"}},
+	&ternaryBuiltin{name: "foldl", function: builtinFoldl, params: ast.Identifiers{"func", "arr", "init"}},
+	&ternaryBuiltin{name: "foldr", function: builtinFoldr, params: ast.Identifiers{"func", "arr", "init"}},
 	&binaryBuiltin{name: "range", function: builtinRange, params: ast.Identifiers{"from", "to"}},
 	&binaryBuiltin{name: "primitiveEquals", function: primitiveEquals, params: ast.Identifiers{"x", "y"}},
 	&binaryBuiltin{name: "equals", function: builtinEquals, params: ast.Identifiers{"x", "y"}},
