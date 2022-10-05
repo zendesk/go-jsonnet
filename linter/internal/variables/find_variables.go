@@ -88,7 +88,7 @@ func findVariables(node ast.Node, info *common.VariableInfo, scope Environment) 
 		if v, ok := scope[node.Id]; ok {
 			v.Occurences = append(v.Occurences, node)
 		} else {
-			panic("Undeclared variable " + string(node.Id) + " - it should be caught earlier")
+			panic("Undeclared variable " + ast.GetString(node.Id) + " - it should be caught earlier")
 		}
 
 	default:

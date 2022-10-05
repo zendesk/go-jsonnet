@@ -11,97 +11,97 @@ func prepareStdlib(g *typeGraph) {
 	jsonType := anyType // It actually cannot functions anywhere
 
 	required := func(name string) ast.Parameter {
-		return ast.Parameter{Name: ast.Identifier(name)}
+		return ast.Parameter{Name: ast.NewIdentifier(name)}
 	}
 
 	dummyDefaultArg := &ast.LiteralNull{}
 	optional := func(name string) ast.Parameter {
-		return ast.Parameter{Name: ast.Identifier(name), DefaultArg: dummyDefaultArg}
+		return ast.Parameter{Name: ast.NewIdentifier(name), DefaultArg: dummyDefaultArg}
 	}
 
 	fields := map[string]placeholderID{
 
 		// External variables
-		"extVar": g.newSimpleFuncType(anyType, "x"),
+		"extVar": g.newSimpleFuncType(anyType, ast.NewIdentifier("x")),
 
 		// Types and reflection
 		"thisFile":        stringType,
-		"type":            g.newSimpleFuncType(stringType, "x"),
-		"length":          g.newSimpleFuncType(numberType, "x"),
-		"objectHas":       g.newSimpleFuncType(boolType, "o", "f"),
-		"objectFields":    g.newSimpleFuncType(arrayOfString, "o"),
-		"objectValues":    g.newSimpleFuncType(anyArrayType, "o"),
-		"objectHasAll":    g.newSimpleFuncType(boolType, "o", "f"),
-		"objectFieldsAll": g.newSimpleFuncType(arrayOfString, "o"),
-		"objectValuesAll": g.newSimpleFuncType(anyArrayType, "o"),
-		"prune":           g.newSimpleFuncType(anyObjectType, "a"),
-		"mapWithKey":      g.newSimpleFuncType(anyObjectType, "func", "obj"),
+		"type":            g.newSimpleFuncType(stringType, ast.NewIdentifier("x")),
+		"length":          g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"objectHas":       g.newSimpleFuncType(boolType, ast.NewIdentifier("o"), ast.NewIdentifier("f")),
+		"objectFields":    g.newSimpleFuncType(arrayOfString, ast.NewIdentifier("o")),
+		"objectValues":    g.newSimpleFuncType(anyArrayType, ast.NewIdentifier("o")),
+		"objectHasAll":    g.newSimpleFuncType(boolType, ast.NewIdentifier("o"), ast.NewIdentifier("f")),
+		"objectFieldsAll": g.newSimpleFuncType(arrayOfString, ast.NewIdentifier("o")),
+		"objectValuesAll": g.newSimpleFuncType(anyArrayType, ast.NewIdentifier("o")),
+		"prune":           g.newSimpleFuncType(anyObjectType, ast.NewIdentifier("a")),
+		"mapWithKey":      g.newSimpleFuncType(anyObjectType, ast.NewIdentifier("func"), ast.NewIdentifier("obj")),
 		"get":             g.newFuncType(anyType, []ast.Parameter{required("o"), required("f"), optional("default"), optional("inc_hidden")}),
 
 		// isSomething
-		"isArray":    g.newSimpleFuncType(boolType, "v"),
-		"isBoolean":  g.newSimpleFuncType(boolType, "v"),
-		"isFunction": g.newSimpleFuncType(boolType, "v"),
-		"isNumber":   g.newSimpleFuncType(boolType, "v"),
-		"isObject":   g.newSimpleFuncType(boolType, "v"),
-		"isString":   g.newSimpleFuncType(boolType, "v"),
+		"isArray":    g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
+		"isBoolean":  g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
+		"isFunction": g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
+		"isNumber":   g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
+		"isObject":   g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
+		"isString":   g.newSimpleFuncType(boolType, ast.NewIdentifier("v")),
 
 		// Mathematical utilities
-		"abs":      g.newSimpleFuncType(numberType, "n"),
-		"sign":     g.newSimpleFuncType(numberType, "n"),
-		"max":      g.newSimpleFuncType(numberType, "a", "b"),
-		"min":      g.newSimpleFuncType(numberType, "a", "b"),
-		"pow":      g.newSimpleFuncType(numberType, "x", "n"),
-		"exp":      g.newSimpleFuncType(numberType, "x"),
-		"log":      g.newSimpleFuncType(numberType, "x"),
-		"exponent": g.newSimpleFuncType(numberType, "x"),
-		"mantissa": g.newSimpleFuncType(numberType, "x"),
-		"floor":    g.newSimpleFuncType(numberType, "x"),
-		"ceil":     g.newSimpleFuncType(numberType, "x"),
-		"sqrt":     g.newSimpleFuncType(numberType, "x"),
-		"sin":      g.newSimpleFuncType(numberType, "x"),
-		"cos":      g.newSimpleFuncType(numberType, "x"),
-		"tan":      g.newSimpleFuncType(numberType, "x"),
-		"asin":     g.newSimpleFuncType(numberType, "x"),
-		"acos":     g.newSimpleFuncType(numberType, "x"),
-		"atan":     g.newSimpleFuncType(numberType, "x"),
+		"abs":      g.newSimpleFuncType(numberType, ast.NewIdentifier("n")),
+		"sign":     g.newSimpleFuncType(numberType, ast.NewIdentifier("n")),
+		"max":      g.newSimpleFuncType(numberType, ast.NewIdentifier("a"), ast.NewIdentifier("b")),
+		"min":      g.newSimpleFuncType(numberType, ast.NewIdentifier("a"), ast.NewIdentifier("b")),
+		"pow":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x"), ast.NewIdentifier("n")),
+		"exp":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"log":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"exponent": g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"mantissa": g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"floor":    g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"ceil":     g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"sqrt":     g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"sin":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"cos":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"tan":      g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"asin":     g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"acos":     g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
+		"atan":     g.newSimpleFuncType(numberType, ast.NewIdentifier("x")),
 
 		// Assertions and debugging
-		"assertEqual": g.newSimpleFuncType(boolType, "a", "b"),
+		"assertEqual": g.newSimpleFuncType(boolType, ast.NewIdentifier("a"), ast.NewIdentifier("b")),
 
 		// String Manipulation
 
-		"toString":    g.newSimpleFuncType(stringType, "a"),
-		"codepoint":   g.newSimpleFuncType(numberType, "str"),
-		"char":        g.newSimpleFuncType(stringType, "n"),
-		"substr":      g.newSimpleFuncType(stringType, "str", "from", "len"),
-		"findSubstr":  g.newSimpleFuncType(numberArrayType, "pat", "str"),
-		"startsWith":  g.newSimpleFuncType(boolType, "a", "b"),
-		"endsWith":    g.newSimpleFuncType(boolType, "a", "b"),
-		"stripChars":  g.newSimpleFuncType(stringType, "str", "chars"),
-		"lstripChars": g.newSimpleFuncType(stringType, "str", "chars"),
-		"rstripChars": g.newSimpleFuncType(stringType, "str", "chars"),
-		"split":       g.newSimpleFuncType(arrayOfString, "str", "c"),
-		"splitLimit":  g.newSimpleFuncType(arrayOfString, "str", "c", "maxsplits"),
-		"strReplace":  g.newSimpleFuncType(stringType, "str", "from", "to"),
-		"asciiUpper":  g.newSimpleFuncType(stringType, "str"),
-		"asciiLower":  g.newSimpleFuncType(stringType, "str"),
-		"stringChars": g.newSimpleFuncType(stringType, "str"),
-		"format":      g.newSimpleFuncType(stringType, "str", "vals"),
+		"toString":    g.newSimpleFuncType(stringType, ast.NewIdentifier("a")),
+		"codepoint":   g.newSimpleFuncType(numberType, ast.NewIdentifier("str")),
+		"char":        g.newSimpleFuncType(stringType, ast.NewIdentifier("n")),
+		"substr":      g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("from"), ast.NewIdentifier("len")),
+		"findSubstr":  g.newSimpleFuncType(numberArrayType, ast.NewIdentifier("pat"), ast.NewIdentifier("str")),
+		"startsWith":  g.newSimpleFuncType(boolType, ast.NewIdentifier("a"), ast.NewIdentifier("b")),
+		"endsWith":    g.newSimpleFuncType(boolType, ast.NewIdentifier("a"), ast.NewIdentifier("b")),
+		"stripChars":  g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("chars")),
+		"lstripChars": g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("chars")),
+		"rstripChars": g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("chars")),
+		"split":       g.newSimpleFuncType(arrayOfString, ast.NewIdentifier("str"), ast.NewIdentifier("c")),
+		"splitLimit":  g.newSimpleFuncType(arrayOfString, ast.NewIdentifier("str"), ast.NewIdentifier("c"), ast.NewIdentifier("maxsplits")),
+		"strReplace":  g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("from"), ast.NewIdentifier("to")),
+		"asciiUpper":  g.newSimpleFuncType(stringType, ast.NewIdentifier("str")),
+		"asciiLower":  g.newSimpleFuncType(stringType, ast.NewIdentifier("str")),
+		"stringChars": g.newSimpleFuncType(stringType, ast.NewIdentifier("str")),
+		"format":      g.newSimpleFuncType(stringType, ast.NewIdentifier("str"), ast.NewIdentifier("vals")),
 		// TODO(sbarzowski) Fix when they match the documentation
-		"escapeStringBash":    g.newSimpleFuncType(stringType, "str_"),
-		"escapeStringDollars": g.newSimpleFuncType(stringType, "str_"),
-		"escapeStringJson":    g.newSimpleFuncType(stringType, "str_"),
-		"escapeStringPython":  g.newSimpleFuncType(stringType, "str"),
+		"escapeStringBash":    g.newSimpleFuncType(stringType, ast.NewIdentifier("str_")),
+		"escapeStringDollars": g.newSimpleFuncType(stringType, ast.NewIdentifier("str_")),
+		"escapeStringJson":    g.newSimpleFuncType(stringType, ast.NewIdentifier("str_")),
+		"escapeStringPython":  g.newSimpleFuncType(stringType, ast.NewIdentifier("str")),
 
 		// Parsing
 
-		"parseInt":   g.newSimpleFuncType(numberType, "str"),
-		"parseOctal": g.newSimpleFuncType(numberType, "str"),
-		"parseHex":   g.newSimpleFuncType(numberType, "str"),
-		"parseJson":  g.newSimpleFuncType(jsonType, "str"),
-		"parseYaml":  g.newSimpleFuncType(jsonType, "str"),
-		"encodeUTF8": g.newSimpleFuncType(numberArrayType, "str"),
+		"parseInt":   g.newSimpleFuncType(numberType, ast.NewIdentifier("str")),
+		"parseOctal": g.newSimpleFuncType(numberType, ast.NewIdentifier("str")),
+		"parseHex":   g.newSimpleFuncType(numberType, ast.NewIdentifier("str")),
+		"parseJson":  g.newSimpleFuncType(jsonType, ast.NewIdentifier("str")),
+		"parseYaml":  g.newSimpleFuncType(jsonType, ast.NewIdentifier("str")),
+		"encodeUTF8": g.newSimpleFuncType(numberArrayType, ast.NewIdentifier("str")),
 		"decodeUTF8": g.newSimpleFuncType(stringType, "arr"),
 
 		// Manifestation
@@ -149,8 +149,8 @@ func prepareStdlib(g *typeGraph) {
 		// Encoding
 
 		"base64":            g.newSimpleFuncType(stringType, "input"),
-		"base64DecodeBytes": g.newSimpleFuncType(numberType, "str"),
-		"base64Decode":      g.newSimpleFuncType(stringType, "str"),
+		"base64DecodeBytes": g.newSimpleFuncType(numberType, ast.NewIdentifier("str")),
+		"base64Decode":      g.newSimpleFuncType(stringType, ast.NewIdentifier("str")),
 		"md5":               g.newSimpleFuncType(stringType, "s"),
 
 		// JSON Merge Patch

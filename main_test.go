@@ -78,7 +78,7 @@ type mainTest struct {
 
 var jsonToString = &NativeFunction{
 	Name:   "jsonToString",
-	Params: ast.Identifiers{"x"},
+	Params: ast.Identifiers{ast.NewIdentifier("x")},
 	Func: func(x []interface{}) (interface{}, error) {
 		bytes, err := json.Marshal(x[0])
 		if err != nil {

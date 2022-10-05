@@ -188,7 +188,7 @@ func (c *FixIndentation) specs(spec *ast.ForSpec, currIndent indent) {
 	c.fill(spec.ForFodder, true, true, currIndent.lineUp)
 	c.column += 3 // for
 	c.fill(spec.VarFodder, true, true, currIndent.lineUp)
-	c.column += len(spec.VarName)
+	c.column += len(ast.GetString(spec.VarName))
 	c.fill(spec.InFodder, true, true, currIndent.lineUp)
 	c.column += 2 // in
 	newIndent := c.newIndent(*openFodder(spec.Expr), currIndent, c.column)
@@ -222,7 +222,7 @@ func (c *FixIndentation) params(fodderL ast.Fodder, params []ast.Parameter,
 			c.column++ // ','
 		}
 		c.fill(param.NameFodder, !first, true, newIndent.lineUp)
-		c.column += len(param.Name)
+		c.column += len(ast.GetString(param.Name))
 		if param.DefaultArg != nil {
 			c.fill(param.EqFodder, false, false, newIndent.lineUp)
 			// default arg, no spacing: x=e
@@ -283,7 +283,7 @@ func (c *FixIndentation) fields(fields ast.ObjectFields, currIndent indent, crow
 			c.fill(field.Fodder1, i > 0 || crowded, true, currIndent.lineUp)
 			c.column += 5 // local
 			c.fill(field.Fodder2, true, true, currIndent.lineUp)
-			c.column += len(*field.Id)
+			c.column += len(ast.GetString(*field.Id))
 			c.fieldParams(field, currIndent)
 			c.fill(field.OpFodder, true, true, currIndent.lineUp)
 			c.column++ // =
@@ -292,7 +292,7 @@ func (c *FixIndentation) fields(fields ast.ObjectFields, currIndent indent, crow
 
 		case ast.ObjectFieldID:
 			c.fill(field.Fodder1, i > 0 || crowded, true, newIndent)
-			c.column += len(*field.Id)
+			c.column += len(ast.GetString(*field.Id))
 			unparseFieldRemainder(field)
 
 		case ast.ObjectFieldStr:
@@ -395,7 +395,7 @@ func (c *FixIndentation) Visit(expr ast.Node, currIndent indent, crowded bool) {
 			}
 			space := !first
 			c.fill(arg.NameFodder, space, false, argIndent.lineUp)
-			c.column += len(arg.Name)
+			c.column += len(ast.GetString(arg.Name))
 			c.column++ // "="
 			c.Visit(arg.Arg, argIndent, false)
 			c.fill(arg.CommaFodder, false, false, argIndent.lineUp)
@@ -593,7 +593,7 @@ func (c *FixIndentation) Visit(expr ast.Node, currIndent indent, crowded bool) {
 			c.column++ // "."
 			newIndent := c.newIndent(node.RightBracketFodder, currIndent, c.column)
 			c.fill(node.RightBracketFodder, false, false, newIndent.lineUp) // Can also be IdFodder
-			c.column += len(*node.Id)
+			c.column += len(ast.GetString(*node.Id))
 		} else {
 			c.column++ // "["
 			newIndent := c.newIndent(*openFodder(node.Index), currIndent, c.column)
@@ -647,7 +647,7 @@ func (c *FixIndentation) Visit(expr ast.Node, currIndent indent, crowded bool) {
 			}
 			first = false
 			c.fill(bind.VarFodder, true, true, newIndent.lineUp)
-			c.column += len(bind.Variable)
+			c.column += len(ast.GetString(bind.Variable))
 			if bind.Fun != nil {
 				c.params(bind.Fun.ParenLeftFodder,
 					bind.Fun.Parameters,
@@ -784,7 +784,7 @@ func (c *FixIndentation) Visit(expr ast.Node, currIndent indent, crowded bool) {
 			c.column++ // ".";
 			newIndent := c.newIndent(node.IDFodder, currIndent, c.column)
 			c.fill(node.IDFodder, false, false, newIndent.lineUp)
-			c.column += len(*node.Id)
+			c.column += len(ast.GetString(*node.Id))
 		} else {
 			c.column++ // "[";
 			newIndent := c.newIndent(*openFodder(node.Index), currIndent, c.column)
@@ -800,7 +800,7 @@ func (c *FixIndentation) Visit(expr ast.Node, currIndent indent, crowded bool) {
 		c.Visit(node.Expr, newIndent, leftIsDollar)
 
 	case *ast.Var:
-		c.column += len(node.Id)
+		c.column += len(ast.GetString(node.Id))
 	}
 
 }

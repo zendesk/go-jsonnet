@@ -424,11 +424,12 @@ func addContext(node ast.Node, context *string, bind string) {
 
 	case *ast.Local:
 		for _, bind := range node.Binds {
-			namedThunkContext := "thunk <" + string(bind.Variable) + "> from <" + *context + ">"
+			bindStr := ast.GetString(bind.Variable)
+			namedThunkContext := "thunk <" + bindStr + "> from <" + *context + ">"
 			if bind.Fun != nil {
-				addContext(bind.Fun, &namedThunkContext, string(bind.Variable))
+				addContext(bind.Fun, &namedThunkContext, bindStr)
 			} else {
-				addContext(bind.Body, &namedThunkContext, string(bind.Variable))
+				addContext(bind.Body, &namedThunkContext, bindStr)
 			}
 		}
 		addContext(node.Body, context, bind)

@@ -41,6 +41,8 @@ func (i IdentifierSet) ToOrderedSlice() []Identifier {
 
 type identifierSorter []Identifier
 
-func (s identifierSorter) Len() int           { return len(s) }
-func (s identifierSorter) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s identifierSorter) Less(i, j int) bool { return s[i] < s[j] }
+func (s identifierSorter) Len() int      { return len(s) }
+func (s identifierSorter) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s identifierSorter) Less(i, j int) bool {
+	return GetString(s[i]) < GetString(s[j])
+}

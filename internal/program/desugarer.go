@@ -26,11 +26,12 @@ import (
 )
 
 var desugaredBop = map[ast.BinaryOp]ast.Identifier{
-	ast.BopPercent: "mod",
-	ast.BopIn:      "objectHasAll",
+	ast.BopPercent: ast.NewIdentifier("mod"),
+	ast.BopIn:      ast.NewIdentifier("objectHasAll"),
 }
 
-func makeStr(s string) *ast.LiteralString {
+func makeStr(s ast.Identifier) *ast.LiteralString {
+	// TODO(jcameron): accept an interned value not string
 	return &ast.LiteralString{
 		NodeBase:    ast.NodeBase{},
 		Value:       s,
@@ -60,7 +61,7 @@ func desugarFields(nodeBase ast.NodeBase, fields *ast.ObjectFields, objLevel int
 		case ast.ObjectAssert:
 			msg := field.Expr3
 			if msg == nil {
-				msg = buildLiteralString("Object assertion failed.")
+				msg = buildLiteralString(ast.NewIdentifier("Object assertion failed."))
 			}
 			onFailure := &ast.Error{
 				NodeBase: ast.NodeBase{
@@ -79,7 +80,7 @@ func desugarFields(nodeBase ast.NodeBase, fields *ast.ObjectFields, objLevel int
 		case ast.ObjectFieldID:
 			desugaredFields = append(desugaredFields, ast.DesugaredObjectField{
 				Hide:      field.Hide,
-				Name:      makeStr(string(*field.Id)),
+				Name:      makeStr(*field.Id),
 				Body:      field.Expr2,
 				PlusSuper: field.SuperSugar,
 				LocRange:  field.LocRange,
@@ -109,7 +110,7 @@ func desugarFields(nodeBase ast.NodeBase, fields *ast.ObjectFields, objLevel int
 	// Hidden variable to allow $ binding.
 	if objLevel == 0 {
 		locals = append(locals, ast.LocalBind{
-			Variable: ast.Identifier("$"),
+			Variable: ast.NewIdentifier("$"),
 			Body:     &ast.Self{},
 		})
 	}
@@ -184,7 +185,7 @@ func desugarForSpec(inside ast.Node, loc ast.LocationRange, forSpec *ast.ForSpec
 	if err != nil {
 		return nil, err
 	}
-	current := buildStdCall("flatMap", loc, function, forSpec.Expr)
+	current := buildStdCall(ast.NewIdentifier("flatMap"), loc, function, forSpec.Expr)
 	if forSpec.Outer == nil {
 		return current, nil
 	}
@@ -232,11 +233,11 @@ func desugarObjectComp(comp *ast.ObjectComp, objLevel int) (ast.Node, error) {
 		return nil, err
 	}
 
-	desugaredComp := buildStdCall("$objectFlatMerge", *comp.Loc(), desugaredArrayComp)
+	desugaredComp := buildStdCall(ast.NewIdentifier("$objectFlatMerge"), *comp.Loc(), desugaredArrayComp)
 	return desugaredComp, nil
 }
 
-func buildLiteralString(value string) ast.Node {
+func buildLiteralString(value ast.Identifier) ast.Node {
 	return &ast.LiteralString{
 		Kind:  ast.StringDouble,
 		Value: value,
@@ -246,12 +247,12 @@ func buildLiteralString(value string) ast.Node {
 func buildSimpleIndex(obj ast.Node, member ast.Identifier) ast.Node {
 	return &ast.Index{
 		Target: obj,
-		Index:  buildLiteralString(string(member)),
+		Index:  buildLiteralString(member),
 	}
 }
 
 func buildStdCall(builtinName ast.Identifier, loc ast.LocationRange, args ...ast.Node) ast.Node {
-	std := &ast.Var{Id: "$std"}
+	std := &ast.Var{Id: ast.NewIdentifier("$std")}
 	builtin := buildSimpleIndex(std, builtinName)
 	positional := make([]ast.CommaSeparatedExpr, len(args))
 	for i := range args {
@@ -341,7 +342,7 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 
 	case *ast.Assert:
 		if node.Message == nil {
-			node.Message = buildLiteralString("Assertion failed")
+			node.Message = buildLiteralString(ast.NewIdentifier("Assertion failed"))
 		}
 		*astPtr = &ast.Conditional{
 			Cond:       node.Cond,
@@ -400,7 +401,7 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 		if objLevel == 0 {
 			return errors.MakeStaticError("No top-level object found.", *node.Loc())
 		}
-		*astPtr = &ast.Var{NodeBase: node.NodeBase, Id: ast.Identifier("$")}
+		*astPtr = &ast.Var{NodeBase: node.NodeBase, Id: ast.NewIdentifier("$")}
 
 	case *ast.Error:
 		err = desugar(&node.Expr, objLevel)
@@ -458,7 +459,7 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 			if node.Index != nil {
 				panic(fmt.Sprintf("Node with both Id and Index: %#+v", node))
 			}
-			node.Index = makeStr(string(*node.Id))
+			node.Index = makeStr(*node.Id)
 			node.Id = nil
 		}
 		err = desugar(&node.Index, objLevel)
@@ -476,7 +477,7 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 		if node.Step == nil {
 			node.Step = &ast.LiteralNull{}
 		}
-		*astPtr = buildStdCall("slice", *node.Loc(), node.Target, node.BeginIndex, node.EndIndex, node.Step)
+		*astPtr = buildStdCall(ast.NewIdentifier("slice"), *node.Loc(), node.Target, node.BeginIndex, node.EndIndex, node.Step)
 		err = desugar(astPtr, objLevel)
 		if err != nil {
 			return
@@ -503,11 +504,11 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 
 	case *ast.LiteralString:
 		if node.Kind.FullyEscaped() {
-			unescaped, err := parser.StringUnescape(node.Loc(), node.Value)
+			unescaped, err := parser.StringUnescape(node.Loc(), ast.GetString(node.Value))
 			if err != nil {
 				return err
 			}
-			node.Value = unescaped
+			node.Value = ast.NewIdentifier(unescaped)
 		}
 		node.Kind = ast.StringDouble
 		node.BlockIndent = ""
@@ -540,7 +541,7 @@ func desugar(astPtr *ast.Node, objLevel int) (err error) {
 
 	case *ast.SuperIndex:
 		if node.Id != nil {
-			node.Index = &ast.LiteralString{Value: string(*node.Id)}
+			node.Index = &ast.LiteralString{Value: *node.Id}
 			node.Id = nil
 		}
 

@@ -1368,7 +1368,7 @@ func tomlEncodeString(s string) string {
 }
 
 // tomlEncodeKey encodes a key - returning same string if it does not need quoting,
-// otherwise return it quoted; returns empty key as ''
+// otherwise return it quoted; returns empty key as ”
 func tomlEncodeKey(s string) string {
 	bareAllowed := true
 
@@ -1975,44 +1975,44 @@ func (b *generalBuiltin) evalCall(args callArguments, i *interpreter) (value, er
 
 // End of builtin utils
 
-var builtinID = &unaryBuiltin{name: "id", function: builtinIdentity, params: ast.Identifiers{"x"}}
+var builtinID = &unaryBuiltin{name: ast.NewIdentifier("id"), function: builtinIdentity, params: ast.Identifiers{ast.NewIdentifier("x")}}
 var functionID = &valueFunction{ec: builtinID}
 
 var bopBuiltins = []*binaryBuiltin{
 	// Note that % and `in` are desugared instead of being handled here
-	ast.BopMult: &binaryBuiltin{name: "operator*", function: builtinMult, params: ast.Identifiers{"x", "y"}},
-	ast.BopDiv:  &binaryBuiltin{name: "operator/", function: builtinDiv, params: ast.Identifiers{"x", "y"}},
+	ast.BopMult: &binaryBuiltin{name: ast.NewIdentifier("operator*"), function: builtinMult, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopDiv:  &binaryBuiltin{name: ast.NewIdentifier("operator/"), function: builtinDiv, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
 
-	ast.BopPlus:  &binaryBuiltin{name: "operator+", function: builtinPlus, params: ast.Identifiers{"x", "y"}},
-	ast.BopMinus: &binaryBuiltin{name: "operator-", function: builtinMinus, params: ast.Identifiers{"x", "y"}},
+	ast.BopPlus:  &binaryBuiltin{name: ast.NewIdentifier("operator+"), function: builtinPlus, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopMinus: &binaryBuiltin{name: ast.NewIdentifier("operator-"), function: builtinMinus, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
 
-	ast.BopShiftL: &binaryBuiltin{name: "operator<<", function: builtinShiftL, params: ast.Identifiers{"x", "y"}},
-	ast.BopShiftR: &binaryBuiltin{name: "operator>>", function: builtinShiftR, params: ast.Identifiers{"x", "y"}},
+	ast.BopShiftL: &binaryBuiltin{name: ast.NewIdentifier("operator<<"), function: builtinShiftL, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopShiftR: &binaryBuiltin{name: ast.NewIdentifier("operator>>"), function: builtinShiftR, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
 
-	ast.BopGreater:   &binaryBuiltin{name: "operator>", function: builtinGreater, params: ast.Identifiers{"x", "y"}},
-	ast.BopGreaterEq: &binaryBuiltin{name: "operator>=", function: builtinGreaterEq, params: ast.Identifiers{"x", "y"}},
-	ast.BopLess:      &binaryBuiltin{name: "operator<,", function: builtinLess, params: ast.Identifiers{"x", "y"}},
-	ast.BopLessEq:    &binaryBuiltin{name: "operator<=", function: builtinLessEq, params: ast.Identifiers{"x", "y"}},
+	ast.BopGreater:   &binaryBuiltin{name: ast.NewIdentifier("operator>"), function: builtinGreater, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopGreaterEq: &binaryBuiltin{name: ast.NewIdentifier("operator>="), function: builtinGreaterEq, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopLess:      &binaryBuiltin{name: ast.NewIdentifier("operator<,"), function: builtinLess, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopLessEq:    &binaryBuiltin{name: ast.NewIdentifier("operator<="), function: builtinLessEq, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
 
-	ast.BopManifestEqual:   &binaryBuiltin{name: "operator==", function: builtinEquals, params: ast.Identifiers{"x", "y"}},
-	ast.BopManifestUnequal: &binaryBuiltin{name: "operator!=", function: builtinNotEquals, params: ast.Identifiers{"x", "y"}}, // Special case
+	ast.BopManifestEqual:   &binaryBuiltin{name: ast.NewIdentifier("operator=="), function: builtinEquals, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopManifestUnequal: &binaryBuiltin{name: ast.NewIdentifier("operator!="), function: builtinNotEquals, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}}, // Special case
 
-	ast.BopBitwiseAnd: &binaryBuiltin{name: "operator&", function: builtinBitwiseAnd, params: ast.Identifiers{"x", "y"}},
-	ast.BopBitwiseXor: &binaryBuiltin{name: "operator^", function: builtinBitwiseXor, params: ast.Identifiers{"x", "y"}},
-	ast.BopBitwiseOr:  &binaryBuiltin{name: "operator|", function: builtinBitwiseOr, params: ast.Identifiers{"x", "y"}},
+	ast.BopBitwiseAnd: &binaryBuiltin{name: ast.NewIdentifier("operator&"), function: builtinBitwiseAnd, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopBitwiseXor: &binaryBuiltin{name: ast.NewIdentifier("operator^"), function: builtinBitwiseXor, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	ast.BopBitwiseOr:  &binaryBuiltin{name: ast.NewIdentifier("operator|"), function: builtinBitwiseOr, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
 }
 
 var uopBuiltins = []*unaryBuiltin{
-	ast.UopNot:        &unaryBuiltin{name: "operator!", function: builtinNegation, params: ast.Identifiers{"x"}},
-	ast.UopBitwiseNot: &unaryBuiltin{name: "operator~", function: builtinBitNeg, params: ast.Identifiers{"x"}},
-	ast.UopPlus:       &unaryBuiltin{name: "operator+ (unary)", function: builtinUnaryPlus, params: ast.Identifiers{"x"}},
-	ast.UopMinus:      &unaryBuiltin{name: "operator- (unary)", function: builtinUnaryMinus, params: ast.Identifiers{"x"}},
+	ast.UopNot:        &unaryBuiltin{name: ast.NewIdentifier("operator!"), function: builtinNegation, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	ast.UopBitwiseNot: &unaryBuiltin{name: ast.NewIdentifier("operator~"), function: builtinBitNeg, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	ast.UopPlus:       &unaryBuiltin{name: ast.NewIdentifier("operator+ (unary)"), function: builtinUnaryPlus, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	ast.UopMinus:      &unaryBuiltin{name: ast.NewIdentifier("operator- (unary)"), function: builtinUnaryMinus, params: ast.Identifiers{ast.NewIdentifier("x")}},
 }
 
 func buildBuiltinMap(builtins []builtin) map[string]evalCallable {
 	result := make(map[string]evalCallable, len(builtins))
 	for _, b := range builtins {
-		result[string(b.Name())] = b
+		result[ast.GetString(b.Name())] = b
 	}
 	return result
 }
@@ -2031,59 +2031,59 @@ func builtinParseInt(i *interpreter, x value) (value, error) {
 
 var funcBuiltins = buildBuiltinMap([]builtin{
 	builtinID,
-	&unaryBuiltin{name: "extVar", function: builtinExtVar, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "length", function: builtinLength, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "toString", function: builtinToString, params: ast.Identifiers{"a"}},
-	&binaryBuiltin{name: "trace", function: builtinTrace, params: ast.Identifiers{"str", "rest"}},
-	&binaryBuiltin{name: "makeArray", function: builtinMakeArray, params: ast.Identifiers{"sz", "func"}},
-	&binaryBuiltin{name: "flatMap", function: builtinFlatMap, params: ast.Identifiers{"func", "arr"}},
-	&binaryBuiltin{name: "join", function: builtinJoin, params: ast.Identifiers{"sep", "arr"}},
-	&unaryBuiltin{name: "reverse", function: builtinReverse, params: ast.Identifiers{"arr"}},
-	&binaryBuiltin{name: "filter", function: builtinFilter, params: ast.Identifiers{"func", "arr"}},
-	&ternaryBuiltin{name: "foldl", function: builtinFoldl, params: ast.Identifiers{"func", "arr", "init"}},
-	&ternaryBuiltin{name: "foldr", function: builtinFoldr, params: ast.Identifiers{"func", "arr", "init"}},
-	&binaryBuiltin{name: "range", function: builtinRange, params: ast.Identifiers{"from", "to"}},
-	&binaryBuiltin{name: "primitiveEquals", function: primitiveEquals, params: ast.Identifiers{"x", "y"}},
-	&binaryBuiltin{name: "equals", function: builtinEquals, params: ast.Identifiers{"x", "y"}},
-	&binaryBuiltin{name: "objectFieldsEx", function: builtinObjectFieldsEx, params: ast.Identifiers{"obj", "hidden"}},
-	&ternaryBuiltin{name: "objectHasEx", function: builtinObjectHasEx, params: ast.Identifiers{"obj", "fname", "hidden"}},
-	&unaryBuiltin{name: "type", function: builtinType, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "char", function: builtinChar, params: ast.Identifiers{"n"}},
-	&unaryBuiltin{name: "codepoint", function: builtinCodepoint, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "ceil", function: builtinCeil, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "floor", function: builtinFloor, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "sqrt", function: builtinSqrt, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "sin", function: builtinSin, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "cos", function: builtinCos, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "tan", function: builtinTan, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "asin", function: builtinAsin, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "acos", function: builtinAcos, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "atan", function: builtinAtan, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "log", function: builtinLog, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "exp", function: builtinExp, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "mantissa", function: builtinMantissa, params: ast.Identifiers{"x"}},
-	&unaryBuiltin{name: "exponent", function: builtinExponent, params: ast.Identifiers{"x"}},
-	&binaryBuiltin{name: "pow", function: builtinPow, params: ast.Identifiers{"x", "n"}},
-	&binaryBuiltin{name: "modulo", function: builtinModulo, params: ast.Identifiers{"x", "y"}},
-	&unaryBuiltin{name: "md5", function: builtinMd5, params: ast.Identifiers{"s"}},
-	&ternaryBuiltin{name: "substr", function: builtinSubstr, params: ast.Identifiers{"str", "from", "len"}},
-	&ternaryBuiltin{name: "splitLimit", function: builtinSplitLimit, params: ast.Identifiers{"str", "c", "maxsplits"}},
-	&ternaryBuiltin{name: "strReplace", function: builtinStrReplace, params: ast.Identifiers{"str", "from", "to"}},
-	&unaryBuiltin{name: "base64Decode", function: builtinBase64Decode, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "base64DecodeBytes", function: builtinBase64DecodeBytes, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "parseInt", function: builtinParseInt, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "parseJson", function: builtinParseJSON, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "parseYaml", function: builtinParseYAML, params: ast.Identifiers{"str"}},
-	&generalBuiltin{name: "manifestJsonEx", function: builtinManifestJSONEx, params: []generalBuiltinParameter{{name: "value"}, {name: "indent"},
-		{name: "newline", defaultValue: &valueFlatString{value: []rune("\n")}},
-		{name: "key_val_sep", defaultValue: &valueFlatString{value: []rune(": ")}}}},
-	&generalBuiltin{name: "manifestTomlEx", function: builtinManifestTomlEx, params: []generalBuiltinParameter{{name: "value"}, {name: "indent"}}},
-	&unaryBuiltin{name: "base64", function: builtinBase64, params: ast.Identifiers{"input"}},
-	&unaryBuiltin{name: "encodeUTF8", function: builtinEncodeUTF8, params: ast.Identifiers{"str"}},
-	&unaryBuiltin{name: "decodeUTF8", function: builtinDecodeUTF8, params: ast.Identifiers{"arr"}},
-	&generalBuiltin{name: "sort", function: builtinSort, params: []generalBuiltinParameter{{name: "arr"}, {name: "keyF", defaultValue: functionID}}},
-	&unaryBuiltin{name: "native", function: builtinNative, params: ast.Identifiers{"x"}},
+	&unaryBuiltin{name: ast.NewIdentifier("extVar"), function: builtinExtVar, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("length"), function: builtinLength, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("toString"), function: builtinToString, params: ast.Identifiers{ast.NewIdentifier("a")}},
+	&binaryBuiltin{name: ast.NewIdentifier("trace"), function: builtinTrace, params: ast.Identifiers{ast.NewIdentifier("str"), ast.NewIdentifier("rest")}},
+	&binaryBuiltin{name: ast.NewIdentifier("makeArray"), function: builtinMakeArray, params: ast.Identifiers{ast.NewIdentifier("sz"), ast.NewIdentifier("func")}},
+	&binaryBuiltin{name: ast.NewIdentifier("flatMap"), function: builtinFlatMap, params: ast.Identifiers{ast.NewIdentifier("func"), ast.NewIdentifier("arr")}},
+	&binaryBuiltin{name: ast.NewIdentifier("join"), function: builtinJoin, params: ast.Identifiers{ast.NewIdentifier("sep"), ast.NewIdentifier("arr")}},
+	&unaryBuiltin{name: ast.NewIdentifier("reverse"), function: builtinReverse, params: ast.Identifiers{ast.NewIdentifier("arr")}},
+	&binaryBuiltin{name: ast.NewIdentifier("filter"), function: builtinFilter, params: ast.Identifiers{ast.NewIdentifier("func"), ast.NewIdentifier("arr")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("foldl"), function: builtinFoldl, params: ast.Identifiers{ast.NewIdentifier("func"), ast.NewIdentifier("arr"), ast.NewIdentifier("init")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("foldr"), function: builtinFoldr, params: ast.Identifiers{ast.NewIdentifier("func"), ast.NewIdentifier("arr"), ast.NewIdentifier("init")}},
+	&binaryBuiltin{name: ast.NewIdentifier("range"), function: builtinRange, params: ast.Identifiers{ast.NewIdentifier("from"), ast.NewIdentifier("to")}},
+	&binaryBuiltin{name: ast.NewIdentifier("primitiveEquals"), function: primitiveEquals, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	&binaryBuiltin{name: ast.NewIdentifier("equals"), function: builtinEquals, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	&binaryBuiltin{name: ast.NewIdentifier("objectFieldsEx"), function: builtinObjectFieldsEx, params: ast.Identifiers{ast.NewIdentifier("obj"), ast.NewIdentifier("hidden")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("objectHasEx"), function: builtinObjectHasEx, params: ast.Identifiers{ast.NewIdentifier("obj"), ast.NewIdentifier("fname"), ast.NewIdentifier("hidden")}},
+	&unaryBuiltin{name: ast.NewIdentifier("type"), function: builtinType, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("char"), function: builtinChar, params: ast.Identifiers{ast.NewIdentifier("n")}},
+	&unaryBuiltin{name: ast.NewIdentifier("codepoint"), function: builtinCodepoint, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("ceil"), function: builtinCeil, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("floor"), function: builtinFloor, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("sqrt"), function: builtinSqrt, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("sin"), function: builtinSin, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("cos"), function: builtinCos, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("tan"), function: builtinTan, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("asin"), function: builtinAsin, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("acos"), function: builtinAcos, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("atan"), function: builtinAtan, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("log"), function: builtinLog, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("exp"), function: builtinExp, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("mantissa"), function: builtinMantissa, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&unaryBuiltin{name: ast.NewIdentifier("exponent"), function: builtinExponent, params: ast.Identifiers{ast.NewIdentifier("x")}},
+	&binaryBuiltin{name: ast.NewIdentifier("pow"), function: builtinPow, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("n")}},
+	&binaryBuiltin{name: ast.NewIdentifier("modulo"), function: builtinModulo, params: ast.Identifiers{ast.NewIdentifier("x"), ast.NewIdentifier("y")}},
+	&unaryBuiltin{name: ast.NewIdentifier("md5"), function: builtinMd5, params: ast.Identifiers{ast.NewIdentifier("s")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("substr"), function: builtinSubstr, params: ast.Identifiers{ast.NewIdentifier("str"), ast.NewIdentifier("from"), ast.NewIdentifier("len")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("splitLimit"), function: builtinSplitLimit, params: ast.Identifiers{ast.NewIdentifier("str"), ast.NewIdentifier("c"), ast.NewIdentifier("maxsplits")}},
+	&ternaryBuiltin{name: ast.NewIdentifier("strReplace"), function: builtinStrReplace, params: ast.Identifiers{ast.NewIdentifier("str"), ast.NewIdentifier("from"), ast.NewIdentifier("to")}},
+	&unaryBuiltin{name: ast.NewIdentifier("base64Decode"), function: builtinBase64Decode, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("base64DecodeBytes"), function: builtinBase64DecodeBytes, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("parseInt"), function: builtinParseInt, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("parseJson"), function: builtinParseJSON, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("parseYaml"), function: builtinParseYAML, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&generalBuiltin{name: ast.NewIdentifier("manifestJsonEx"), function: builtinManifestJSONEx, params: []generalBuiltinParameter{{name: ast.NewIdentifier("value")}, {name: ast.NewIdentifier("indent")},
+		{name: ast.NewIdentifier("newline"), defaultValue: &valueFlatString{value: []rune("\n")}},
+		{name: ast.NewIdentifier("key_val_sep"), defaultValue: &valueFlatString{value: []rune(": ")}}}},
+	&generalBuiltin{name: ast.NewIdentifier("manifestTomlEx"), function: builtinManifestTomlEx, params: []generalBuiltinParameter{{name: ast.NewIdentifier("value")}, {name: ast.NewIdentifier("indent")}}},
+	&unaryBuiltin{name: ast.NewIdentifier("base64"), function: builtinBase64, params: ast.Identifiers{ast.NewIdentifier("input")}},
+	&unaryBuiltin{name: ast.NewIdentifier("encodeUTF8"), function: builtinEncodeUTF8, params: ast.Identifiers{ast.NewIdentifier("str")}},
+	&unaryBuiltin{name: ast.NewIdentifier("decodeUTF8"), function: builtinDecodeUTF8, params: ast.Identifiers{ast.NewIdentifier("arr")}},
+	&generalBuiltin{name: ast.NewIdentifier("sort"), function: builtinSort, params: []generalBuiltinParameter{{name: ast.NewIdentifier("arr")}, {name: ast.NewIdentifier("keyF"), defaultValue: functionID}}},
+	&unaryBuiltin{name: ast.NewIdentifier("native"), function: builtinNative, params: ast.Identifiers{ast.NewIdentifier("x")}},
 
 	// internal
-	&unaryBuiltin{name: "$objectFlatMerge", function: builtinUglyObjectFlatMerge, params: ast.Identifiers{"x"}},
+	&unaryBuiltin{name: ast.NewIdentifier("$objectFlatMerge"), function: builtinUglyObjectFlatMerge, params: ast.Identifiers{ast.NewIdentifier("x")}},
 })

@@ -67,6 +67,7 @@ package astgen
 
 import (
 	"github.com/google/go-jsonnet/ast"
+	"go4.org/intern"
 )
 
 `[1:]

@@ -19,14 +19,24 @@ package ast
 
 import (
 	"fmt"
+
+	"go4.org/intern"
 )
 
 // Identifier represents a variable / parameter / field name.
 // +gen set
-type Identifier string
+type Identifier *intern.Value
 
 // Identifiers represents an Identifier slice.
 type Identifiers []Identifier
+
+func NewIdentifier(s string) Identifier {
+	return Identifier(intern.GetByString(s))
+}
+
+func GetString(i *intern.Value) string {
+	return i.Get().(string)
+}
 
 // TODO(jbeda) implement interning of identifiers if necessary.  The C++
 // version does so.
@@ -539,7 +549,7 @@ func (k LiteralStringKind) FullyEscaped() bool {
 
 // LiteralString represents a JSON string
 type LiteralString struct {
-	Value           string
+	Value           Identifier
 	BlockIndent     string
 	BlockTermIndent string
 	NodeBase

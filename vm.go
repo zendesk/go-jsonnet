@@ -254,7 +254,7 @@ func (vm *VM) findDependencies(filePath string, node *ast.Node, dependencies map
 	var cleanedAbsPath string
 	switch i := (*node).(type) {
 	case *ast.Import:
-		node, foundAt, err := vm.ImportAST(filePath, i.File.Value)
+		node, foundAt, err := vm.ImportAST(filePath, ast.GetString(i.File.Value))
 		if err != nil {
 			*stackTrace = append([]traceFrame{{Loc: *i.Loc()}}, *stackTrace...)
 			return err
@@ -278,7 +278,7 @@ func (vm *VM) findDependencies(filePath string, node *ast.Node, dependencies map
 			return err
 		}
 	case *ast.ImportStr:
-		foundAt, err := vm.ResolveImport(filePath, i.File.Value)
+		foundAt, err := vm.ResolveImport(filePath, ast.GetString(i.File.Value))
 		if err != nil {
 			*stackTrace = append([]traceFrame{{Loc: *i.Loc()}}, *stackTrace...)
 			return err
@@ -293,7 +293,7 @@ func (vm *VM) findDependencies(filePath string, node *ast.Node, dependencies map
 		}
 		dependencies[cleanedAbsPath] = struct{}{}
 	case *ast.ImportBin:
-		foundAt, err := vm.ResolveImport(filePath, i.File.Value)
+		foundAt, err := vm.ResolveImport(filePath, ast.GetString(i.File.Value))
 		if err != nil {
 			*stackTrace = append([]traceFrame{{Loc: *i.Loc()}}, *stackTrace...)
 			return err

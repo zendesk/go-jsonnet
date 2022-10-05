@@ -299,6 +299,7 @@ func (s *dumpState) dumpPrimitivePointerVal(value reflect.Value) {
 		if isPrimitive && isFirstVisit {
 			s.printPrimitivePointer(v.Elem(), pointerName)
 		} else {
+			//
 			s.dumpPrimitivePointerVal(v.Elem())
 		}
 	}
@@ -344,8 +345,17 @@ func (s *dumpState) dumpReusedPointerVal(value reflect.Value) {
 	case reflect.Ptr:
 		pointerName, isReused, isPrimitive, isFirstVisit := s.nameForPointer(v), s.isReusedPointer(v), s.isPrimitivePointer(v), s.visitPointerAndCheckIfFirstTime(v)
 		if isReused && !isPrimitive && isFirstVisit {
-			mustWrite(s.w, []byte("var "+pointerName+" = &"))
-			s.dumpVal(v.Elem())
+			mustWrite(s.w, []byte("// type "+strconv.Itoa(v.Elem().NumField())))
+			s.newline()
+			mustWrite(s.w, []byte("var "+pointerName+" = "))
+			//TODO(jcameron): perhaps refactor into it's own function?
+			if v.Type().String() == "ast.Identifier" {
+				val := v.Elem().FieldByName("cmpVal").Elem()
+				mustWrite(s.w, []byte("intern.GetByString(`"+val.String()+"`)"))
+			} else {
+				mustWrite(s.w, []byte("&"))
+				s.dumpVal(v.Elem())
+			}
 			s.newline()
 		} else {
 			s.dumpReusedPointerVal(v.Elem())
@@ -427,8 +437,13 @@ func (s *dumpState) dumpVal(value reflect.Value) {
 		if isPrimitive || isReused {
 			mustWrite(s.w, []byte(pointerName))
 		} else {
-			mustWrite(s.w, []byte("&"))
-			s.dumpVal(v.Elem())
+			if v.Type().String() == "ast.Identifier" {
+				val := v.Elem().FieldByName("cmpVal").Elem()
+				mustWrite(s.w, []byte("intern.GetByString(`"+val.String()+"`)"))
+			} else {
+				mustWrite(s.w, []byte("&"))
+				s.dumpVal(v.Elem())
+			}
 		}
 
 	case reflect.Map:

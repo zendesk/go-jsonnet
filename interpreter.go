@@ -481,15 +481,15 @@ func (i *interpreter) evaluate(a ast.Node, tc tailCallStatus) (value, error) {
 
 	case *ast.Import:
 		codePath := node.Loc().FileName
-		return i.importCache.importCode(codePath, node.File.Value, i)
+		return i.importCache.importCode(codePath, ast.GetString(node.File.Value), i)
 
 	case *ast.ImportStr:
 		codePath := node.Loc().FileName
-		return i.importCache.importString(codePath, node.File.Value, i)
+		return i.importCache.importString(codePath, ast.GetString(node.File.Value), i)
 
 	case *ast.ImportBin:
 		codePath := node.Loc().FileName
-		return i.importCache.importBinary(codePath, node.File.Value, i)
+		return i.importCache.importBinary(codePath, ast.GetString(node.File.Value), i)
 
 	case *ast.LiteralBoolean:
 		return makeValueBoolean(node.Value), nil
@@ -508,7 +508,7 @@ func (i *interpreter) evaluate(a ast.Node, tc tailCallStatus) (value, error) {
 		return makeValueNumber(num), nil
 
 	case *ast.LiteralString:
-		return makeValueString(node.Value), nil
+		return makeValueString(ast.GetString(node.Value)), nil
 
 	case *ast.Local:
 		vars := make(bindingFrame, len(node.Binds))
@@ -1194,7 +1194,7 @@ func evaluateStd(i *interpreter) (value, error) {
 	stdThunk := &cachedThunk{}
 	beforeStdEnv := makeEnvironment(
 		bindingFrame{
-			"$std": stdThunk,
+			ast.NewIdentifier("$std"): stdThunk,
 		},
 		makeUnboundSelfBinding(),
 	)
@@ -1264,8 +1264,8 @@ func makeInitialEnv(filename string, baseStd *valueObject) environment {
 
 	return makeEnvironment(
 		bindingFrame{
-			"std":  stdThunk,
-			"$std": stdThunk, // Unavailable to the user. To be used with desugaring.
+			ast.NewIdentifier("std"):  stdThunk,
+			ast.NewIdentifier("$std"): stdThunk, // Unavailable to the user. To be used with desugaring.
 		},
 		makeUnboundSelfBinding(),
 	)
@@ -1295,7 +1295,7 @@ func evaluateAux(i *interpreter, node ast.Node, tla vmExtMap) (value, error) {
 		toplevelArgMap := prepareExtVars(i, tla, "top-level-arg")
 		args := callArguments{}
 		for argName, pv := range toplevelArgMap {
-			args.named = append(args.named, namedCallArgument{name: ast.Identifier(argName), pv: pv})
+			args.named = append(args.named, namedCallArgument{name: ast.NewIdentifier(argName), pv: pv})
 		}
 		funcLoc := ast.MakeLocationRangeMessage("Top-level function call")
 		funcTrace := traceElement{

@@ -129,7 +129,7 @@ func (p *parser) parseArgument() (ast.Fodder, *ast.Identifier, ast.Fodder, ast.N
 	var eqFodder ast.Fodder
 	if p.peek().kind == tokenIdentifier && p.doublePeek().kind == tokenOperator && p.doublePeek().data == "=" {
 		ident := p.pop()
-		var tmpID = ast.Identifier(ident.data)
+		var tmpID = ast.NewIdentifier(ident.data)
 		id = &tmpID
 		idFodder = ident.fodder
 		eq := p.pop()
@@ -207,7 +207,7 @@ func (p *parser) parseParameter() (ast.Parameter, errors.StaticError) {
 	if err != nil {
 		return ret, err.WithContext("parsing parameter")
 	}
-	ret.Name = ast.Identifier(ident.data)
+	ret.Name = ast.NewIdentifier(ident.data)
 	ret.NameFodder = ident.fodder
 	ret.LocRange = ident.loc
 	if p.peek().kind == tokenOperator && p.peek().data == "=" {
@@ -269,7 +269,7 @@ func (p *parser) parseBind(binds *ast.LocalBinds) (*token, errors.StaticError) {
 		return nil, popErr
 	}
 	for _, b := range *binds {
-		if b.Variable == ast.Identifier(varID.data) {
+		if b.Variable == ast.NewIdentifier(varID.data) {
 			return nil, errors.MakeStaticError(fmt.Sprintf("Duplicate local var: %v", varID.data), varID.loc)
 		}
 	}
@@ -309,7 +309,7 @@ func (p *parser) parseBind(binds *ast.LocalBinds) (*token, errors.StaticError) {
 		fun.Body = body
 		*binds = append(*binds, ast.LocalBind{
 			VarFodder:   varID.fodder,
-			Variable:    ast.Identifier(varID.data),
+			Variable:    ast.NewIdentifier(varID.data),
 			EqFodder:    eqToken.fodder,
 			Body:        body,
 			Fun:         fun,
@@ -319,7 +319,7 @@ func (p *parser) parseBind(binds *ast.LocalBinds) (*token, errors.StaticError) {
 	} else {
 		*binds = append(*binds, ast.LocalBind{
 			VarFodder:   varID.fodder,
-			Variable:    ast.Identifier(varID.data),
+			Variable:    ast.NewIdentifier(varID.data),
 			EqFodder:    eqToken.fodder,
 			Body:        body,
 			CloseFodder: delim.fodder,
@@ -418,12 +418,12 @@ func (p *parser) parseObjectRemainderField(literalFields *LiteralFieldSet, tok *
 	var kind ast.ObjectFieldKind
 	var fodder1 ast.Fodder
 	var expr1 ast.Node
-	var id *ast.Identifier
+	var id ast.Identifier
 	var fodder2 ast.Fodder
 	switch next.kind {
 	case tokenIdentifier:
 		kind = ast.ObjectFieldID
-		id = (*ast.Identifier)(&next.data)
+		id = ast.NewIdentifier(next.data)
 		fodder1 = next.fodder
 	case tokenStringDouble, tokenStringSingle,
 		tokenStringBlock, tokenVerbatimStringDouble, tokenVerbatimStringSingle:
@@ -504,7 +504,7 @@ func (p *parser) parseObjectRemainderField(literalFields *LiteralFieldSet, tok *
 		Method:      method,
 		Fodder1:     fodder1,
 		Expr1:       expr1,
-		Id:          id,
+		Id:          &id,
 		Fodder2:     fodder2,
 		OpFodder:    opFodder,
 		Expr2:       body,
@@ -519,7 +519,7 @@ func (p *parser) parseObjectRemainderLocal(binds *ast.IdentifierSet, tok *token,
 		return nil, popErr
 	}
 
-	id := ast.Identifier(varID.data)
+	id := ast.NewIdentifier(varID.data)
 
 	if binds.Contains(id) {
 		return nil, errors.MakeStaticError(fmt.Sprintf("Duplicate local var: %v", id), varID.loc)
@@ -699,7 +699,7 @@ func (p *parser) parseComprehensionSpecs(forToken *token, end tokenKind) (*ast.F
 		if popErr != nil {
 			return nil, nil, popErr
 		}
-		id := ast.Identifier(varID.data)
+		id := ast.NewIdentifier(varID.data)
 		inToken, err := p.popExpect(tokenIn)
 		if err != nil {
 			return nil, nil, err
@@ -832,19 +832,19 @@ func tokenStringToAst(tok *token) *ast.LiteralString {
 	case tokenStringSingle:
 		return &ast.LiteralString{
 			NodeBase: ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Value:    tok.data,
+			Value:    ast.NewIdentifier(tok.data),
 			Kind:     ast.StringSingle,
 		}
 	case tokenStringDouble:
 		return &ast.LiteralString{
 			NodeBase: ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Value:    tok.data,
+			Value:    ast.NewIdentifier(tok.data),
 			Kind:     ast.StringDouble,
 		}
 	case tokenStringBlock:
 		return &ast.LiteralString{
 			NodeBase:        ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Value:           tok.data,
+			Value:           ast.NewIdentifier(tok.data),
 			Kind:            ast.StringBlock,
 			BlockIndent:     tok.stringBlockIndent,
 			BlockTermIndent: tok.stringBlockTermIndent,
@@ -852,13 +852,13 @@ func tokenStringToAst(tok *token) *ast.LiteralString {
 	case tokenVerbatimStringDouble:
 		return &ast.LiteralString{
 			NodeBase: ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Value:    tok.data,
+			Value:    ast.NewIdentifier(tok.data),
 			Kind:     ast.VerbatimStringDouble,
 		}
 	case tokenVerbatimStringSingle:
 		return &ast.LiteralString{
 			NodeBase: ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Value:    tok.data,
+			Value:    ast.NewIdentifier(tok.data),
 			Kind:     ast.VerbatimStringSingle,
 		}
 	default:
@@ -931,7 +931,7 @@ func (p *parser) parseTerminal() (ast.Node, errors.StaticError) {
 	case tokenIdentifier:
 		return &ast.Var{
 			NodeBase: ast.NewNodeBaseLoc(tok.loc, tok.fodder),
-			Id:       ast.Identifier(tok.data),
+			Id:       ast.NewIdentifier(tok.data),
 		}, nil
 	case tokenSelf:
 		return &ast.Self{
@@ -940,7 +940,7 @@ func (p *parser) parseTerminal() (ast.Node, errors.StaticError) {
 	case tokenSuper:
 		next := p.pop()
 		var index ast.Node
-		var id *ast.Identifier
+		var id ast.Identifier
 		var idFodder ast.Fodder
 		switch next.kind {
 		case tokenDot:
@@ -949,7 +949,7 @@ func (p *parser) parseTerminal() (ast.Node, errors.StaticError) {
 				return nil, err
 			}
 			idFodder = fieldID.fodder
-			id = (*ast.Identifier)(&fieldID.data)
+			id = ast.NewIdentifier(fieldID.data)
 		case tokenBracketL:
 			var err errors.StaticError
 			index, err = p.parse(maxPrecedence)
@@ -969,7 +969,7 @@ func (p *parser) parseTerminal() (ast.Node, errors.StaticError) {
 			DotFodder: next.fodder,
 			Index:     index,
 			IDFodder:  idFodder,
-			Id:        id,
+			Id:        &id,
 		}, nil
 	}
 
@@ -1311,7 +1311,7 @@ func (p *parser) parse(prec precedence) (ast.Node, errors.StaticError) {
 				if err != nil {
 					return nil, err
 				}
-				id := ast.Identifier(fieldID.data)
+				id := ast.NewIdentifier(fieldID.data)
 				lhs = &ast.Index{
 					NodeBase:           ast.NewNodeBaseLoc(locFromTokens(begin, fieldID), ast.Fodder{}),
 					Target:             lhs,

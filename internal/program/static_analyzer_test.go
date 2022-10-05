@@ -49,11 +49,11 @@ func TestSimpleLocal(t *testing.T) {
 	node := &ast.Local{
 		Binds: ast.LocalBinds{
 			ast.LocalBind{
-				Variable: "x",
+				Variable: ast.NewIdentifier("x"),
 				Body:     &ast.LiteralNull{},
 			},
 		},
-		Body: &ast.Var{Id: "x"},
+		Body: &ast.Var{Id: ast.NewIdentifier("x")},
 	}
 
 	err := analyze(node)
@@ -64,7 +64,7 @@ func TestSimpleLocal(t *testing.T) {
 		t.Errorf("Unexpected free variables %+v in root local. Expected none.", node.FreeVariables())
 	}
 	returned := node.Body.FreeVariables()
-	expectedVars := ast.Identifiers{"x"}
+	expectedVars := ast.Identifiers{ast.NewIdentifier("x")}
 	if !hasTheseFreeVars(returned, expectedVars) {
 		t.Errorf("Unexpected free variables %+v in local body. Expected %+v.", returned, expectedVars)
 	}
